@@ -8,18 +8,42 @@ public class Character_Movement : MonoBehaviour
     private Vector3 playerVelocity;
     private bool groundedPlayer;
     private float playerSpeed = 6.0f;
-    private float jumpHeight = 1.0f;
+    private float jumpHeight = 3.0f;
     private float gravityValue = -9.81f;
     public Transform groundCheck;
     public float groundDistance = .4f;
     public LayerMask groundMask;
 
-    private void Start()
+    public states state;
+
+    public enum states
+    {
+        Move, Stop
+
+
+    }
+    public void Start()
     {
         controller = gameObject.GetComponent<CharacterController>();
+        state = states.Move;
     }
 
+
+
     void Update()
+    {
+        switch (state)
+        {
+            case states.Move:
+                CanMove();
+                break;
+            case states.Stop:
+                cantmove();
+                break;
+        }
+    }
+
+    public void CanMove()
     {
         groundedPlayer = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         if (groundedPlayer && playerVelocity.y < 0)
@@ -43,5 +67,13 @@ public class Character_Movement : MonoBehaviour
 
         playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
+    }
+    public void cantmove()
+    {
+        state = states.Stop;
+    }
+    public void MechanicOver()
+    {
+        state = states.Move;
     }
 }
